@@ -3,6 +3,7 @@ package me.joan.jssh;
 import com.jcraft.jsch.*;
 
 import java.util.Properties;
+import org.apache.logging.log4j.Logger;
 
 public class Session {
 
@@ -15,7 +16,7 @@ public class Session {
     private String privkey;
     private String pubkey;
     private byte[] passphrase;
-    private Logger logger;
+    private org.apache.logging.log4j.Logger logger;
 
     public Session(int port, String hostname, String username, String password, String privkey, String pubkey, byte[] passphrase, Logger logger) {
         this.port = port;
@@ -51,12 +52,12 @@ public class Session {
             this.session.setConfig(config);
             this.session.setPassword(this.password);
 
-            System.out.println("Connecting SSH to " + this.username + "@" + this.hostname + " - Please wait for few seconds...");
+            logger.info("Connecting SSH to " + this.username + "@" + this.hostname + " - Please wait for few seconds...");
             this.session.connect();
-            System.out.println("Connected successfully!");
+            logger.info("Connected successfully!");
         } catch (JSchException jSchException) {
-            System.out.println("There has been an error while connecting to " + this.username +"@"+this.hostname);
-            jSchException.printStackTrace();
+            logger.error("There has been an error while connecting to " + this.username +"@"+this.hostname,
+                    jSchException);
         }
     }
 
