@@ -2,6 +2,8 @@ package me.joan.jssh;
 
 import com.jcraft.jsch.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import org.apache.logging.log4j.Logger;
 
@@ -59,6 +61,43 @@ public class Session {
             logger.error("There has been an error while connecting to " + this.username +"@"+this.hostname,
                     jSchException);
         }
+    }
+
+
+    private String readChannelOutput(ChannelExec theChannel) {
+        String output = null;
+
+        byte[] buffer = new byte[1024];
+
+        try {
+            InputStream in = theChannel.getInputStream();
+            String line = "";
+            while (true) {
+                while (in.available() > 0) {
+                    int i = in.read(buffer, 0, 1024);
+
+                    if (i < 0) break;
+
+                    line = new String(buffer, 0, i);
+                    output = line;
+                }
+
+
+                if (theChannel.isClosed()) {
+                    break;
+                }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException interruptedException) {
+                    logger.error("Error while closing channel output: ", interruptedException);
+                }
+            }
+        } catch (IOException ioException) {
+            logger.error("Error while reading channel output: ", ioException);
+        }
+
+        return output;
     }
 
 }
