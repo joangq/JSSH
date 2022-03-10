@@ -1,4 +1,5 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java'
 }
 
@@ -12,8 +13,37 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    // https://mvnrepository.com/artifact/com.jcraft/jsch
+    implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
+
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
+
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
+
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
 
 test {
     useJUnitPlatform()
+}
+
+
+jar {
+    manifest {
+        attributes 'Main-Class':'me.joan.Main'
+    }
+
+}
+
+shadowJar {
+    manifest {
+        inheritFrom project.tasks.jar.manifest
+    }
+    //relocate 'org.apache','me.joan.org.apache'
+    relocate 'org.apache.commons', 'me.joan.org.apache.commons'
+    relocate 'com.jcraft','me.joan.com.jcraft'
+
 }
