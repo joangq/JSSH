@@ -100,4 +100,41 @@ public class Session {
         return output;
     }
 
+    /* To execute a command over JSch, it's necessary to connect using a "Session"
+     * Each session can have multiple "Channels". Each Channel has a type. For automating, the recommended type is
+     * "ChannelExec", which executes commands over SSH. Multiple channels can run in parallel or in series.
+     * One can't just "ADD" commands to a ChannelExec, each ChannelExec executes one command and returns it's output
+     * through an InputStream, that can be read using a delimited-size byte array buffer. (See readChannelOutput)
+     *
+     * So, to execute multiple commands, we create as much ChannelExec instances as we need, and read each one of
+     * their individual outputs. We can pass the output as a String, or we can print it to a PrintStream.
+     *
+     */
+
+    public String executeCommand(String command) {
+
+        String output = null;
+
+        try {
+            ChannelExec theChannel = (ChannelExec) this.session.openChannel("exec");
+            theChannel.setOutputStream(System.out);
+            theChannel.setInputStream(null);
+            theChannel.setErrStream(System.err);
+            theChannel.setCommand(command);
+            theChannel.connect();
+            output = readChannelOutput(theChannel);
+            theChannel.disconnect();
+        } catch (JSchException jSchException) {
+            logger.error("An error occurred while sending a command.", jSchException);
+            logger.error("Command: "+command);
+        }
+
+        return output;
+    }
+
+    // Grab the returned String by executeCommand() and send it through the Logger
+    public void logExecuteCommand(String command) {
+        this.logger.info(this.executeCommand(command));
+    }
+
 }
