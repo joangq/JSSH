@@ -4,6 +4,8 @@ import com.jcraft.jsch.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Properties;
 import org.apache.logging.log4j.Logger;
 
@@ -64,17 +66,17 @@ public class Session {
     }
 
 
-    private String readChannelOutput(ChannelExec theChannel) {
+    private String readChannelOutput(ChannelExec theChannel, int bufferSize) {
         String output = null;
 
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[bufferSize];
 
         try {
             InputStream in = theChannel.getInputStream();
             String line = "";
             while (true) {
                 while (in.available() > 0) {
-                    int i = in.read(buffer, 0, 1024);
+                    int i = in.read(buffer, 0, bufferSize);
 
                     if (i < 0) break;
 
@@ -98,6 +100,10 @@ public class Session {
         }
 
         return output;
+    }
+
+    private String readChannelOutput(ChannelExec theChannel) {
+        return readChannelOutput(theChannel, 1024);
     }
 
     /* To execute a command over JSch, it's necessary to connect using a "Session"
@@ -130,6 +136,24 @@ public class Session {
         }
 
         return output;
+    }
+
+    public void executeCommand(String command, PrintStream out) {
+        String output = executeCommand(command);
+        out.print(output);
+    }
+
+    public void executeCommands(ArrayList<String> commandList) {
+        for (String theCommand : commandList) {
+            executeCommand(theCommand);
+        }
+    }
+
+    public void executeCommands(ArrayList<String> commandList, PrintStream out) {
+        for(String theCommand : commandList)
+        {
+            executeCommand(theCommand, out);
+        }
     }
 
     // Grab the returned String by executeCommand() and send it through the Logger
