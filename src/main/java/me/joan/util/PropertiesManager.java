@@ -69,4 +69,14 @@ public class PropertiesManager {
             }
         }
     }
+
+    // Get key by name
+    public String getKey(String name) {
+        return this.propertiesMap.get(name);
+    }
+
+    // Get full list of keys
+    public HashMap<String, String> getKeys() {
+        return propertiesMap;
+    }
 }

@@ -2,11 +2,11 @@ package me.joan.jssh;
 
 import com.jcraft.jsch.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
+import java.nio.charset.StandardCharsets;
+
+import me.joan.util.Utils;
 import org.apache.logging.log4j.Logger;
 
 public class Session {
@@ -30,6 +30,18 @@ public class Session {
         this.privkey = privkey;
         this.pubkey = pubkey;
         this.passphrase = passphrase;
+        this.logger = logger;
+    }
+
+    // Constructor made to work with PropertiesManager
+    public Session(HashMap<String,String> keys, Logger logger) {
+        this.port = Integer.parseInt(keys.get("port"));
+        this.hostname = keys.get("hostname");
+        this.username = keys.get("username");
+        this.password = keys.get("password");
+        this.privkey = Utils.formatKeypath(keys.get("privkey"));
+        this.pubkey = Utils.formatKeypath(keys.get("pubkey"));
+        this.passphrase = keys.get("passphrase").getBytes(StandardCharsets.UTF_8);
         this.logger = logger;
     }
 
