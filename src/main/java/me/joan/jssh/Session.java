@@ -160,5 +160,4 @@ public class Session {
     public void logExecuteCommand(String command) {
         this.logger.info(this.executeCommand(command));
     }
-
 }
