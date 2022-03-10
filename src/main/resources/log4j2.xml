@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{HH:mm:ss.SSS}][%t][%level][%logger{36}] %msg%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Logger name="ERROR" level="error">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="DEBUG" level="debug">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="TRACE" level="trace">
+            <AppenderRef ref="Console"/>
+        </Logger>
+    </Loggers>
+</Configuration>
